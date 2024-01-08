@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <!-- Bootstrap CSS v5.2.1 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
 
 
 </head>
@@ -16,7 +17,8 @@
 
 <body>
 
-    <header style=" background: radial-gradient(circle, #00588D, #00395B, #00243C);margin-bottom: 3rem; border-bottom: 3px solid rgb(0, 0, 0); margin: 0px;">
+    <header
+        style=" background: radial-gradient(circle, #00588D, #00395B, #00243C);margin-bottom: 3rem; border-bottom: 3px solid rgb(0, 0, 0); margin: 0px;">
 
         <nav class="navbar navbar-expand-lg ">
             <div class="container-fluid">
@@ -24,7 +26,8 @@
 
                 <ul class="nav justify-content-center">
                     <li class="nav-item">
-                        <a class="nav-link active fs-5" aria-current="page" href="listado.php" style="color: aliceblue;">listado</a>
+                        <a class="nav-link active fs-5" aria-current="page" href="listado.php"
+                            style="color: aliceblue;">listado</a>
                     </li>
                 </ul>
             </div>
@@ -48,7 +51,7 @@
 
 
         // obtener el valor de las cajas por total
-
+        
         $total = 0;
         // Verificar si se ha enviado el formulario
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -56,23 +59,24 @@
             if (isset($_POST["cajas"]) && !empty($_POST["cajas"])) {
                 // Procesar la consulta con los productos seleccionados
                 $seleccion = implode(", ", $_POST["cajas"]);
-                
-                if ($seleccion == "0"){
+
+                if ($seleccion == "0") {
 
                     $total = 'seleccione una caja';
-                }else{
-                $query = "SELECT COUNT(*) FROM certificados_mef_bnp";
-                $result = mysqli_query($connection, $query);
-
-                // Verificar si la consulta se realizó con éxito
-                if ($result) {
-                    $row = mysqli_fetch_row($result);
-                    $total = $row[0];
-                    // Cerrar la conexión después de utilizarla
                 } else {
-                    echo "Error en la consulta: " . mysqli_error($connection);
-                }}
-            } 
+                    $query = "SELECT COUNT(*) FROM certificados_mef_bnp";
+                    $result = mysqli_query($connection, $query);
+
+                    // Verificar si la consulta se realizó con éxito
+                    if ($result) {
+                        $row = mysqli_fetch_row($result);
+                        $total = $row[0];
+                        // Cerrar la conexión después de utilizarla
+                    } else {
+                        echo "Error en la consulta: " . mysqli_error($connection);
+                    }
+                }
+            }
         }
 
         ?>
@@ -85,21 +89,23 @@
                     <form action="" method="post">
                         <label for="cajas">Caja:</label>
 
-                        <select class="form-select" aria-label="Default select example" style="width: 45%;" name="cajas[]" id="cajas">
+                        <select class="form-select" aria-label="Default select example" style="width: 45%;"
+                            name="cajas[]" id="cajas">
                             <option value="0">Seleccione caja</option>
                             <option value="1">Caja 1</option>
                             <option value="2">Caja 2</option>
                             <option value="3">Caja 3</option>
                         </select>
 
-                        <input type="submit" value="Verificar" class="btn btn-primary" style="position: relative; left: 240px; top: -40px;">
-
+                        <input type="submit" value="Verificar" class="btn btn-primary"
+                            style="position: relative; left: 240px; top: -40px;">
                     </form>
 
                 </div>
                 <div class="col-2">
                     <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
-                        Total: <?php echo "$total"?>
+                        Total:
+                        <?php echo "$total" ?>
                     </div>
                 </div>
             </div>
@@ -120,7 +126,9 @@
 
                     <form action="" method="POST">
                         <label for="cepadem" style="margin: 5px;">Numero de Cepadem:</label>
-                        <input class="form-control" name="cepadem" type="text" placeholder="Nº de Cepadem" aria-label="default input example" id="cepadem" autocomplete="off" required value="<?php echo $save ?>">
+                        <input class="form-control" name="cepadem" type="text" placeholder="Nº de Cepadem"
+                            aria-label="default input example" id="cepadem" autocomplete="off" required
+                            value="<?php echo $save ?>">
 
                         <input type="submit" value="Verificar" class="btn btn-primary" style="margin: 5px">
 
@@ -139,11 +147,6 @@
 
 
         <?php
-        // Incluir el archivo de conexión
-
-
-
-
 
         //asignando un valor a la variable valor dentro de un if para que se incialice en el momento de hacer la consulta
         $valor = ''; //inicializandola paraevitar error
@@ -154,7 +157,7 @@
         if (is_numeric($valor)) {
             //echo "El valor es un entero.";
             if ($valor >= 1000000 && $valor <= 9999999) { //validando la dimencion numerica del cepadem
-
+        
                 // Función para validar el cepadem
                 function validarcepadem($cepadem)
                 {
@@ -176,7 +179,7 @@
                         if (!$result) {
                             echo "No se ha podido realizar la consulta: " . mysqli_error($connection);
                         } else { //comienza el proceso de validación
-
+        
 
                             if (mysqli_num_rows($result) > 0) {
 
@@ -234,14 +237,11 @@
                 }
             } else {
                 echo '<div class="alert alert-primary text-center h4" role="alert">
-          <b> El Certificado no es válido. </b>
-        </div>';
+                        <b> El Certificado no es válido. </b>
+                    </div>';
             }
-            mysqli_close($connection);
+            // mysqli_close($connection);
         }
-
-
-
         ?>
 
     </main>
@@ -250,17 +250,18 @@
     <footer>
         <!-- place footer here -->
 
-
     </footer>
 
 
 
-
-
     <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
