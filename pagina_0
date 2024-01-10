@@ -1,3 +1,8 @@
+<?php
+include 'conexion.php';
+
+?>
+
 <!doctype html>
 <html lang="en">
 
@@ -47,22 +52,21 @@
 
         <?php
 
-        include 'conexion.php';
-
+        session_start();
 
         // obtener el valor de las cajas por total
-        
         $total = 0;
         // Verificar si se ha enviado el formulario
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Verificar si se han seleccionado productos
+            // Verificar si se han seleccionado cajas
             if (isset($_POST["cajas"]) && !empty($_POST["cajas"])) {
-                // Procesar la consulta con los productos seleccionados
+                // Procesar la consulta con las cajas seleccionadas
                 $seleccion = implode(", ", $_POST["cajas"]);
+                $_SESSION['seleccion'] = $seleccion;
 
                 if ($seleccion == "0") {
-
                     $total = 'seleccione una caja';
+                    $_SESSION['total'] = $total;
                 } else {
                     $query = "SELECT COUNT(*) FROM certificados_mef_bnp";
                     $result = mysqli_query($connection, $query);
@@ -71,14 +75,19 @@
                     if ($result) {
                         $row = mysqli_fetch_row($result);
                         $total = $row[0];
+
+                        // Guardar la variable $seleccion en una sesión
+        
+                        $_SESSION['total'] = $total;
+
                         // Cerrar la conexión después de utilizarla
                     } else {
                         echo "Error en la consulta: " . mysqli_error($connection);
                     }
+
                 }
             }
         }
-
         ?>
 
 
@@ -105,45 +114,79 @@
                 <div class="col-2">
                     <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
                         Total:
-                        <?php echo "$total" ?>
+                        <?php
+                        if (isset($_SESSION['total'])) {
+                            echo $_SESSION['total'];
+                        } else {
+                            echo "Seleccione una caja";
+                        }
+
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
 
 
-        <hr style="margin: 0; color: #00588D;">
 
-        <div class="container " style="margin-left: 40px;">
-            <div class="row justify-content-start">
-                <div class="col-4">
+        <?php $resultado_form1 = '';
+        if (isset($_SESSION['seleccion'])) {
+            $resultado_form1 = "{$_SESSION['seleccion']}";
+        }
 
+        if (!empty($resultado_form1)): ?>
+            <hr style="margin: 0; color: #00588D;">
 
-                    <?php
-                    // Obtener el valor de la cédula desde el envío del formulario, el fin de esto es evitar la cedula introducida no se elimine 
-                    $save = isset($_POST['cepadem']) ? $_POST['cepadem'] : ''; // Verifica si el campo ha sido enviado
-                    ?>
-
-                    <form action="" method="POST">
-                        <label for="cepadem" style="margin: 5px;">Numero de Cepadem:</label>
-                        <input class="form-control" name="cepadem" type="text" placeholder="Nº de Cepadem"
-                            aria-label="default input example" id="cepadem" autocomplete="off" required
-                            value="<?php echo $save ?>">
-
-                        <input type="submit" value="Verificar" class="btn btn-primary" style="margin: 5px">
+            <div class="container " style="margin-left: 40px;">
+                <div class="row justify-content-start">
+                    <div class="col-4">
 
 
-                    </form>
+                        <?php
+                        // Obtener el valor del cepadem desde el envío del formulario, el fin de esto es evitar el cepadem introducida no se elimine 
+                        $save = isset($_POST['cepadem']) ? $_POST['cepadem'] : ''; // Verifica si el campo ha sido enviado
+                        
+                        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                            // Obtén el valor del cepadem desde el envío del formulario
+                            $cepadem = isset($_POST['cepadem']) ? $_POST['cepadem'] : '';
+                        
+                            // Guarda el valor del cepadem en la sesión
+                            $_SESSION['cepadem'] = $cepadem;
+                        }
+                        if (isset($_POST['Guardar'])) {
+                            // Obtiene el valor del cepadem desde la sesión
+                            $cepademGuardado = isset($_SESSION['cepadem']) ? $_SESSION['cepadem'] : '';
+                        
+                            // Muestra la información guardada
+                            echo "Cepadem guardado: " . $cepademGuardado;
+                        }
+                        
+                        ?>
 
-                    <form method="GET" style="position: relative; top: -43px; margin-left: 100px;">
-                        <input type="submit" value="Limpiar" class="btn btn-primary">
-                    </form>
+                        <form action="" method="POST">
+                            <label for="cepadem" style="margin: 5px;">Numero de Cepadem:</label>
+                            <input class="form-control" name="cepadem" type="text" placeholder="Nº de Cepadem"
+                                aria-label="default input example" id="cepadem" autocomplete="off" required
+                                value="<?php echo $save ?>">
+
+                            <input type="submit" value="Verificar" class="btn btn-primary" style="margin: 5px">
+
+
+                        </form>
+
+                        <form method="get" style="position: relative; top: -43px; margin-left: 100px; height: 0px">
+                            <input type="submit" name="limpiar" value="Limpiar" class="btn btn-primary">
+                        </form>
+
+                        <form method="post" style="position: relative; top: -43px; margin-left: 190px;">
+                            <input type="submit" name="Guardar" value="Guardar" class="btn btn-primary">
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <hr style="margin: 5px; color: #00588D;">
-
+            <hr style="margin: 5px; color: #00588D;">
+        <?php endif; ?>
 
 
         <?php
@@ -185,51 +228,50 @@
 
                                 while ($row = mysqli_fetch_assoc($result)) {
 
-
                                     echo '
-                <div class="container text-center" style="margin-top: 25px;">
-                    <div class="row">
-                            <div class=" offset-md-3" style="margin: 0px;">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Sec</th>
-                                        <th scope="col">Cuenta</th>
-                                        <th scope="col">Cepadem</th>
-                                        <th scope="col">caja</th>
-                                        <th scope="col">Lote</th>
-                                        <th scope="col">Fecha</th>
-                                        <th scope="col">Fecha&nbspDe&nbspNegociado</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Apellido</th>
-                                        <th scope="col">cedula</th>
-                                        <th scope="col">monto</th>
-                                    
-                                        
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['sec']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['cuenta']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['cepadem']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['caja']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['lote']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['fecha']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['Fechanegociado']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['nombre']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['apellido']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['cedula']) . '</td>
-                                        <td style="white-space: nowrap;">' . htmlspecialchars($row['monto']) . '</td>
-                                        
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+        <div class="container text-center" style="margin-top: 25px;">
+            <div class="row">
+                    <div class=" offset-md-3" style="margin: 0px;">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Sec</th>
+                                <th scope="col">Cuenta</th>
+                                <th scope="col">Cepadem</th>
+                                <th scope="col">caja</th>
+                                <th scope="col">Lote</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Fecha&nbspDe&nbspNegociado</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Apellido</th>
+                                <th scope="col">cedula</th>
+                                <th scope="col">monto</th>
+                            
+                                
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['sec']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['cuenta']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['cepadem']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['caja']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['lote']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['fecha']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['Fechanegociado']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['nombre']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['apellido']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['cedula']) . '</td>
+                                <td style="white-space: nowrap;">' . htmlspecialchars($row['monto']) . '</td>
+                                
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                ';
+            </div>
+        </div>
+        ';
                                 }
                             }
                         }
@@ -237,12 +279,32 @@
                 }
             } else {
                 echo '<div class="alert alert-primary text-center h4" role="alert">
-                        <b> El Certificado no es válido. </b>
-                    </div>';
+                <b> El Certificado no es válido. </b>
+            </div>';
             }
             // mysqli_close($connection);
         }
+
+        
+
+
+
         ?>
+
+
+        <?php
+        /*
+        if (isset($_POST['limpiar'])) {
+            // Limpiar la variable de sesión
+            unset($_SESSION['total']);
+            unset($_SESSION['seleccion']);
+            $resultado_form1 = ''; // Limpiar el resultado del formulario 1
+        }
+*/
+        ?>
+
+
+
 
     </main>
 
