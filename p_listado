@@ -152,7 +152,7 @@ include 'conexion.php';
             <hr style="margin: 2; color: #00588D;">
             <div class="container-md "  style="margin: 0; width: auto;">
                 <div class="row">
-                  <div class="col-md-4 text-primary fs-3 text">Certificados sin Auditados</div>
+                  <div class="col-md-4 text-primary fs-3 text">Certificados sin Auditar</div>
                   <div class="col-md-4 offset-md-4 fs-3 text">'.($total) .'</div>
                     <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
                         <table class="table caption-top" style="width: auto;">
@@ -227,7 +227,7 @@ include 'conexion.php';
           <div class="container-md "  style="margin: 0; width: auto;">
               <div class="row ">
                 <div class="col-md-4 text-primary fs-3 text">Certificados Auditados</div>
-                <div class="col-md-4 offset-md-4 fs-3 text">'.($total) .'</div>
+                <div class="col-md-4 offset-md-4 fs-3 text">'.($total_2) .'</div>
                 
                   <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
                       <table class="table caption-top" style="width: auto;">
