@@ -40,7 +40,7 @@ include 'conexion.php';
 
     <div class="container text-center">
       <div class="row">
-        <div class="col-md-6 offset-md-3 display-4">Listado</div>
+        <div class="col-md-6 offset-md-3 display-4" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Listado</div>
       </div>
     </div>
 
@@ -97,7 +97,7 @@ include 'conexion.php';
       <div class="row justify-content-start">
         <div class="col-4">
           <form action="" method="post">
-            <label for="cajaSeleccionada">Caja:</label>
+            <label for="cajaSeleccionada" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Caja:</label>
             <select class="form-select" name="cajaSeleccionada" aria-label="Default select example" style="width: 45%;">
               <option value="0" selected>Seleccione listado</option>
               <option value="1">Caja 1</option>
@@ -105,7 +105,7 @@ include 'conexion.php';
               <option value="3">Caja 3</option>
             </select>
 
-            <label for="lote">Lote</label>
+            <label for="lote" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Lote</label>
             <input class="form-control" type="text" placeholder="X-X" name="lote" aria-label="default input example"
               style="width: 45%;">
 
@@ -238,10 +238,9 @@ include 'conexion.php';
           echo '
           <hr style="margin: 2; color: #00588D;">
           <div class="container-md "  style="margin: 0; width: auto;">
-              <div class="row ">
-                <div class="col-md-4 text-primary fs-3 text">Certificados Auditados</div>
+              <div class="row">
+                <div class="col-md-4 text-primary fs-3 text">Certificados sin Auditar</div>
                 <div class="col-md-4 offset-md-4 fs-3 text">' . ($total_2) . '</div>
-                
                   <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
                       <table class="table caption-top" style="width: auto;">
                           <thead>
@@ -258,6 +257,7 @@ include 'conexion.php';
                                   <th scope="col">Estatus</th>
                                   <th scope="col">Auditor</th>
                                   <th scope="col">Fecha_Audito</th>
+
                               </tr>
                           </thead>
                           <tbody>';
