@@ -283,10 +283,12 @@ include 'conexion.php';
         <?php
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["guardarInfo"])) {
+            
+            $fechaActual = date("Y-m-d");
 
             echo $_SESSION["cepadem"];
             $v_cepadem = $_SESSION["cepadem"];
-            $actualizar = "UPDATE `certificados_mef_bnp` SET `Estatus`='AUDI' WHERE cepadem = '$v_cepadem'";
+            $actualizar = "UPDATE `certificados_mef_bnp` SET `Estatus`='AUDI',`Fecha_Audito`='$fechaActual' WHERE cepadem = '$v_cepadem'";
 
             mysqli_query($connection, $actualizar);
 
