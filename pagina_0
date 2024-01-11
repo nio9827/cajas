@@ -40,7 +40,7 @@ include 'conexion.php';
 
         <div class="container text-center">
             <div class="row">
-                <div class="col-md-6 offset-md-3 display-4">Consultar Caja</div>
+                <div class="col-md-6 offset-md-3 display-4" style="font-family: 'Lucida Sans';">Consultar Caja</div>
             </div>
         </div>
 
@@ -53,6 +53,8 @@ include 'conexion.php';
 
         // obtener el valor de las cajas por total
         $total = 0;
+        $seleccion = 0;       
+        $cont = 0; 
         // Verificar si se ha enviado el formulario
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Verificar si se han seleccionado cajas
@@ -62,20 +64,29 @@ include 'conexion.php';
                 $_SESSION['seleccion'] = $seleccion;
 
                 if ($seleccion == "0") {
-                    $total = 'seleccione una caja';
                     $_SESSION['total'] = $total;
+                    $_SESSION['cont'] = $cont;
+
                 } else {
                     $query = "SELECT COUNT(*) FROM certificados_mef_bnp";
                     $result = mysqli_query($connection, $query);
 
+                    $query_cont = "SELECT COUNT(*) FROM certificados_mef_bnp WHERE Estatus = '' and Fecha_Audito = ''" ;
+                    $result_cont = mysqli_query($connection, $query_cont);
+
+
                     // Verificar si la consulta se realizó con éxito
-                    if ($result) {
+                    if ($result and $result_cont) {
                         $row = mysqli_fetch_row($result);
                         $total = $row[0];
+
+                        $row_2 = mysqli_fetch_row($result_cont);
+                        $cont = $row_2[0];
 
                         // Guardar la variable $seleccion en una sesión
 
                         $_SESSION['total'] = $total;
+                        $_SESSION['cont'] = $cont;
 
                         // Cerrar la conexión después de utilizarla
                     } else {
@@ -92,10 +103,10 @@ include 'conexion.php';
                 <div class="col-4">
 
                     <form action="" method="post">
-                        <label for="cajas">Caja:</label>
+                        <label for="cajas" style="font-family: 'Lucida Sans';">Seleccione:</label>
 
                         <select class="form-select" aria-label="Default select example" style="width: 45%;" name="cajas[]" id="cajas">
-                            <option value="0">Seleccione caja</option>
+                            <option value="0"></option>
                             <option value="1">Caja 1</option>
                             <option value="2">Caja 2</option>
                             <option value="3">Caja 3</option>
@@ -105,6 +116,18 @@ include 'conexion.php';
                     </form>
 
                 </div>
+                <div class="col-3">
+                    <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
+                        Caja:
+                        <?php if (isset($_SESSION['total'])){
+                            echo $_SESSION['seleccion'];
+                        }else{
+                            echo 'Seleccione una Caja';
+                        }
+                        ?>
+                    </div>
+                </div>
+
                 <div class="col-2">
                     <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
                         Total:
@@ -112,12 +135,26 @@ include 'conexion.php';
                         if (isset($_SESSION['total'])) {
                             echo $_SESSION['total'];
                         } else {
-                            echo "Seleccione una caja";
+                            echo "";
                         }
 
                         ?>
                     </div>
                 </div>
+
+                <div class="col-2">
+                    <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
+                        Certificado:
+                        <?php if (isset($_SESSION['total'])){
+                            echo $_SESSION['cont'];
+                        }else { 
+                            echo '';
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                
             </div>
         </div>
 
@@ -143,16 +180,16 @@ include 'conexion.php';
                         ?>
 
                         <form action="" method="POST">
-                            <label for="cepadem" style="margin: 5px;">Numero de Cepadem:</label>
+                            <label for="cepadem" style="margin: 5px; font-family: 'Lucida Sans';">Numero de Cepadem:</label>
                             <input class="form-control" name="cepadem" type="text" placeholder="Nº de Cepadem" aria-label="default input example" id="cepadem" autocomplete="off" required value="<?php echo $save ?>">
 
-                            <input type="submit" value="Verificar" class="btn btn-primary" style="margin: 5px">
+                            <input type="submit" value="Consultar" class="btn btn-primary" style="margin: 5px">
 
 
                         </form>
 
-                        <form method="get" style="position: relative; top: -43px; margin-left: 100px; height: 0px">
-                            <input type="submit" name="limpiar" value="Limpiar" class="btn btn-primary">
+                        <form method="post" style="position: relative; top: -42px; margin-left: 105px; height: 0px">
+                            <input type="submit" name="limpiar" value="limpiar" class="btn btn-danger">
                         </form>
 
                     </div>
@@ -283,45 +320,47 @@ include 'conexion.php';
         <?php
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["guardarInfo"])) {
-            
-            $fechaActual = date("Y-m-d");
 
-            echo $_SESSION["cepadem"];
+            $fechaActual = date("Y-m-d");
             $v_cepadem = $_SESSION["cepadem"];
             $actualizar = "UPDATE `certificados_mef_bnp` SET `Estatus`='AUDI',`Fecha_Audito`='$fechaActual' WHERE cepadem = '$v_cepadem'";
 
-            mysqli_query($connection, $actualizar);
+            mysqli_query($connection, $actualizar); ?>
+            <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+            </svg>
 
 
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div class="alert alert-success d-flex align-items-center fs-4 text" role="alert">
+                        <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:">
+                            <use xlink:href="#check-circle-fill" />
+                        </svg>
+                        <div>
+                            ¡CEPADEM VERIFICADO CON EXITO!
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-            // Coloca aquí el código que deseas ejecutar cuando se presiona el botón "Guardar"
-            // Por ejemplo, puedes realizar una acción de guardado en la base de datos.
-            // Ten en cuenta que necesitarás una conexión a la base de datos y el código para realizar la acción de guardado.
-
-            // Ejemplo:
-            // $queryGuardar = "INSERT INTO tu_tabla (columna1, columna2) VALUES ('$valor1', '$valor2')";
-            // mysqli_query($connection, $queryGuardar);
-
-            echo "¡El botón Guardar ha sido presionado!";
-        }
-
-
-        ?>
-
-
-
+        <?php } ?>
 
         <?php
-        /*
-        if (isset($_POST['limpiar'])) {
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["limpiar"])) {
             // Limpiar la variable de sesión
-            unset($_SESSION['total']);
             unset($_SESSION['seleccion']);
-            $resultado_form1 = ''; // Limpiar el resultado del formulario 1
+            unset($_SESSION['total']);
+            unset($_SESSION['cepadem']);
+            unset($_SESSION['cont']);
         }
-*/
         ?>
+
+
 
 
 
