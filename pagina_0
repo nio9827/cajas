@@ -19,30 +19,54 @@ include 'conexion.php';
 </head>
 
 
+
+
 <body>
 
     <header style=" background: radial-gradient(circle, #00588D, #00395B, #00243C);margin-bottom: 3rem; border-bottom: 3px solid rgb(0, 0, 0); margin: 0px;">
 
         <nav class="navbar navbar-expand-lg ">
             <div class="container-fluid">
-                <a class="navbar-brand fs-1" href="pagina0.php" style="color: aliceblue;">CEPADEM.AUDI</a>
-
-                <ul class="nav justify-content-center">
-                    <li class="nav-item">
-                        <a class="nav-link active fs-5" aria-current="page" href="listado.php" style="color: aliceblue;">listado</a>
-                    </li>
-                </ul>
+                <a class="navbar-brand fs-1" href="consulta.php" style="color: aliceblue;">CEPADEM.AUDI</a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav justify-content-center">
+                        <li class="nav-item">
+                            <a class="nav-link active fs-5" aria-current="page" href="listado.php" style="color: aliceblue;">listado</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
 
     <main style="height: auto; width: auto;">
 
-        <div class="container text-center">
-            <div class="row">
-                <div class="col-md-6 offset-md-3 display-4" style="font-family: 'Lucida Sans';">Consultar Caja</div>
+
+        <div class="container-fluid text-center">
+            <div class="row align-items-start">
+                <div class="col">
+                </div>
+                <div class="col display-4 " style="font-family: 'Lucida Sans';">
+                    Consultar Caja </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger" id="cerrarSesionBtn" style="position: relative; top: 20px; left:140px;">Cerrar Sesion</button>
+                </div>
             </div>
         </div>
+
+        <script>
+            // Agrega un evento al botón para cerrar sesión manualmente
+            document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
+                // Realiza una solicitud al servidor para cerrar la sesión
+                fetch('http://dpi-webserver:8080/cepadem/login/cerrar_sesion.php', {
+                    method: 'POST',
+                    credentials: 'include'
+                }).then(function(response) {
+                    // Redirige a la página de inicio de sesión después de cerrar la sesión
+                    window.location.href = 'http://dpi-webserver:8080/cepadem/login/login.php';
+                });
+            });
+        </script>
 
         <hr style="margin: 2; color: #00588D;">
 
@@ -53,8 +77,8 @@ include 'conexion.php';
 
         // obtener el valor de las cajas por total
         $total = 0;
-        $seleccion = 0;       
-        $cont = 0; 
+        $seleccion = 0;
+        $cont = 0;
         // Verificar si se ha enviado el formulario
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Verificar si se han seleccionado cajas
@@ -63,15 +87,14 @@ include 'conexion.php';
                 $seleccion = implode(", ", $_POST["cajas"]);
                 $_SESSION['seleccion'] = $seleccion;
 
-                if ($seleccion == "0") {
+                if ($seleccion == "caja_0") {
                     $_SESSION['total'] = $total;
                     $_SESSION['cont'] = $cont;
-
                 } else {
-                    $query = "SELECT COUNT(*) FROM certificados_mef_bnp";
+                    $query = "SELECT COUNT(*) FROM $seleccion";
                     $result = mysqli_query($connection, $query);
 
-                    $query_cont = "SELECT COUNT(*) FROM certificados_mef_bnp WHERE Estatus = '' and Fecha_Audito = ''" ;
+                    $query_cont = "SELECT COUNT(*) FROM $seleccion WHERE Estatus = '' and Fecha_Audito = ''";
                     $result_cont = mysqli_query($connection, $query_cont);
 
 
@@ -106,10 +129,10 @@ include 'conexion.php';
                         <label for="cajas" style="font-family: 'Lucida Sans';">Seleccione:</label>
 
                         <select class="form-select" aria-label="Default select example" style="width: 45%;" name="cajas[]" id="cajas">
-                            <option value="0"></option>
-                            <option value="1">Caja 1</option>
-                            <option value="2">Caja 2</option>
-                            <option value="3">Caja 3</option>
+                            <option value="caja_0"></option>
+                            <option value="caja_1">Caja 1</option>
+                            <option value="caja_2">Caja 2</option>
+                            <option value="caja_3">Caja 3</option>
                         </select>
 
                         <input type="submit" value="Verificar" class="btn btn-primary" style="position: relative; left: 240px; top: -40px;">
@@ -119,9 +142,9 @@ include 'conexion.php';
                 <div class="col-3">
                     <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
                         Caja:
-                        <?php if (isset($_SESSION['total'])){
+                        <?php if (isset($_SESSION['total'])) {
                             echo $_SESSION['seleccion'];
-                        }else{
+                        } else {
                             echo 'Seleccione una Caja';
                         }
                         ?>
@@ -145,16 +168,16 @@ include 'conexion.php';
                 <div class="col-2">
                     <div class="alert alert-light" role="alert" style="position: relative; top: 10px;">
                         Certificado:
-                        <?php if (isset($_SESSION['total'])){
+                        <?php if (isset($_SESSION['total'])) {
                             echo $_SESSION['cont'];
-                        }else { 
+                        } else {
                             echo '';
                         }
                         ?>
                     </div>
                 </div>
 
-                
+
             </div>
         </div>
 
@@ -229,9 +252,8 @@ include 'conexion.php';
                     // Validar el cepadem utilizando la función validarcepadem
                     if (validarcepadem($cepadem)) {
                         // Realizar la consulta
-                        $query = "SELECT * FROM certificados_mef_bnp WHERE cepadem = '$cepadem'";
+                        $query = "SELECT * FROM $resultado_form1 WHERE cepadem = '$cepadem'";
                         $result = mysqli_query($connection, $query);
-
                         // Verificar si la consulta tuvo éxito 
                         if (!$result) {
                             echo "No se ha podido realizar la consulta: " . mysqli_error($connection);
@@ -239,53 +261,63 @@ include 'conexion.php';
 
 
                             if (mysqli_num_rows($result) > 0) {
+                                
 
                                 while ($row = mysqli_fetch_assoc($result)) {
 
+                                    if ($row['Estatus'] == 'AUDI'){
+
+                                        echo 'Este Certificado ya ha sido verificado';
+
+                                    }else{
+
+                                        
                                     echo '
-        <div class="container text-center" style="margin-top: 25px;">
-            <div class="row">
-                    <div class=" offset-md-3" style="margin: 0px;">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th scope="col">Sec</th>
-                                <th scope="col">Cuenta</th>
-                                <th scope="col">Cepadem</th>
-                                <th scope="col">caja</th>
-                                <th scope="col">Lote</th>
-                                <th scope="col">Fecha</th>
-                                <th scope="col">Fecha&nbspDe&nbspNegociado</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Apellido</th>
-                                <th scope="col">cedula</th>
-                                <th scope="col">monto</th>
-                            
-                                
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['sec']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['cuenta']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['cepadem']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['caja']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['lote']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['fecha']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['Fechanegociado']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['nombre']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['apellido']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['cedula']) . '</td>
-                                <td style="white-space: nowrap;">' . htmlspecialchars($row['monto']) . '</td>
-                                
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-            </div>
-        </div>
-        ';
+                                    <div class="container text-center" style="margin-top: 25px;">
+                                        <div class="row">
+                                                <div class=" offset-md-3" style="margin: 0px;">
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th scope="col">Sec</th>
+                                                            <th scope="col">Cuenta</th>
+                                                            <th scope="col">Cepadem</th>
+                                                            <th scope="col">caja</th>
+                                                            <th scope="col">Lote</th>
+                                                            <th scope="col">Fecha</th>
+                                                            <th scope="col">Fecha&nbspDe&nbspNegociado</th>
+                                                            <th scope="col">Nombre</th>
+                                                            <th scope="col">Apellido</th>
+                                                            <th scope="col">cedula</th>
+                                                            <th scope="col">monto</th>
+                                                        
+                                                            
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr>
+                                                            
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['sec']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['cuenta']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['cepadem']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['caja']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['lote']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['fecha']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['Fechanegociado']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['nombre']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['apellido']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['cedula']) . '</td>
+                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['monto']) . '</td>
+                                                            
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                        </div>
+                                    </div>
+                                    ';
+
+                                    }
                                 }
                             }
                         }
@@ -323,7 +355,7 @@ include 'conexion.php';
 
             $fechaActual = date("Y-m-d");
             $v_cepadem = $_SESSION["cepadem"];
-            $actualizar = "UPDATE `certificados_mef_bnp` SET `Estatus`='AUDI',`Fecha_Audito`='$fechaActual' WHERE cepadem = '$v_cepadem'";
+            $actualizar = "UPDATE `$resultado_form1` SET `Estatus`='AUDI',`Fecha_Audito`='$fechaActual' WHERE cepadem = '$v_cepadem'";
 
             mysqli_query($connection, $actualizar); ?>
             <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
