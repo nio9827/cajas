@@ -23,11 +23,14 @@ include 'conexion.php';
 
     <nav class="navbar navbar-expand-lg ">
       <div class="container-fluid">
-        <a class="navbar-brand fs-1" href="consulta.php" style="color: aliceblue;">CEPADEM.AUDI</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="nav justify-content-center">
+        <img src="css/img2/auditoria logo.png" alt="img2" style="height: 80px;">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="nav navbar-nav justify-content-center">
             <li class="nav-item">
-              <a class="nav-link active fs-5" aria-current="page" href="listado.php" style="color: aliceblue;">listado</a>
+              <a class="nav-link active fs-5 text-white" aria-current="page" href="consulta.php">Consultar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active fs-5 text-white " aria-current="page" href="listado.php">listado</a>
             </li>
           </ul>
         </div>
@@ -62,6 +65,46 @@ include 'conexion.php';
         });
       });
     </script>
+
+    <script>
+      function exportTableToExcel(tableID, filename = '') {
+        var downloadLink;
+        var dataType = 'application/vnd.ms-excel';
+        var tableSelect = document.getElementById(tableID);
+        var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+
+        // Specify file name
+        filename = filename ? filename + '.xls' : 'excel_data.xls';
+
+        // Create download link element
+        downloadLink = document.createElement("a");
+
+        document.body.appendChild(downloadLink);
+
+        if (navigator.msSaveOrOpenBlob) {
+          var blob = new Blob(['ufeff', tableHTML], {
+            type: dataType
+          });
+          navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
+          // Create a link to the file
+          downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+
+          // Setting the file name
+          downloadLink.download = filename;
+
+          //triggering the function
+          downloadLink.click();
+        }
+      }
+    </script>
+
+
+
+
+
+
+
     <hr style="margin: 2; color: #00588D;">
 
 
@@ -81,6 +124,7 @@ include 'conexion.php';
         $cajaSeleccionada = $_POST["cajaSeleccionada"];
         $lote = $_POST["lote"];
 
+
         // Verificar si la caja seleccionada es diferente de "0"
         if ($cajaSeleccionada != "0") {
           // Realizar la consulta para obtener el total correspondiente a la caja y lote seleccionados
@@ -90,7 +134,7 @@ include 'conexion.php';
           $query = "SELECT COUNT(*) FROM  caja_$cajaSeleccionada WHERE caja = '$cajaSeleccionada' AND lote = '$lote' and Estatus = ''";
           $result = mysqli_query($connection, $query);
 
-          $query_2 = "SELECT COUNT(*) FROM  caja_$cajaSeleccionada WHERE caja = '$cajaSeleccionada' AND lote = '$lote' AND Estatus = 'AUDI'";
+          $query_2 = "SELECT COUNT(*) FROM  caja_$cajaSeleccionada WHERE caja = '$cajaSeleccionada' AND lote = '$lote' AND Estatus = 'Auditado'";
           $result_2 = mysqli_query($connection, $query_2);
           // Verificar si la consulta se realizó con éxito
           if ($result and $result_2 and $result_t) {
@@ -120,11 +164,11 @@ include 'conexion.php';
               <option value="0" selected>Seleccione listado</option>
               <option value="1">Caja 1</option>
               <option value="2">Caja 2</option>
-              <option value="3">Caja 3</option>
+
             </select>
 
             <label for="lote" style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">Lote</label>
-            <input class="form-control" type="text" placeholder="X-X" name="lote" aria-label="default input example" style="width: 45%;">
+            <input class="form-control" type="text" placeholder="X-X" name="lote" aria-label="default input example" style="width: 45%; " autocomplete="off">
 
             <input type="submit" value="Verificar" class="btn btn-primary" style="position: relative; left: 240px; top: -40px;">
           </form>
@@ -161,167 +205,181 @@ include 'conexion.php';
       </div>
     </div>
 
+
     <?php
 
     if ($total > 0) {
 
       // Asegúrate de obtener el valor de 'lote' del formulario
       $lote = $_POST["lote"];
-      $query = "SELECT * FROM  caja_$cajaSeleccionada WHERE lote = '$lote' AND Estatus = '' ";
+
+      $query = "SELECT * FROM  caja_$cajaSeleccionada WHERE lote = '$lote'and Estatus = 'Auditado'";
       $result = mysqli_query($connection, $query);
 
       if (!$result) {
         echo "No se ha podido realizar la consulta: " . mysqli_error($connection);
       } else { //comienza el proceso de validación
         if (mysqli_num_rows($result) > 0) {
-
-          echo '
-            <hr style="margin: 2; color: #00588D;">
-            <div class="container-md "  style="margin: 0; width: auto;">
-                <div class="row">
-                  <div class="col-md-4 text-primary fs-3 text">Certificados sin Auditar</div>
-                  <div class="col-md-4 offset-md-4 fs-3 text">' . ($total) . '</div>
-                    <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
-                        <table class="table caption-top" style="width: auto;">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Cepadem</th>
-                                    <th scope="col">Caja</th>
-                                    <th scope="col">Lote</th>
-                                    <th scope="col">Fecha</th>
-                                    <th scope="col">Fecha de Negociado</th>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Apellido</th>
-                                    <th scope="col">Cédula</th>
-                                    <th scope="col">Monto</th>
-                                    <th scope="col">Estatus</th>
-                                    <th scope="col">Auditor</th>
-                                    <th scope="col">Fecha_Audito</th>
-
-                                </tr>
-                            </thead>
-                            <tbody>';
-
-          while ($row = mysqli_fetch_assoc($result)) {
-            echo '
-                <tr>
-                    <td>' . htmlspecialchars($row['cepadem']) . '</td>
-                    <td>' . htmlspecialchars($row['caja']) . '</td>
-                    <td>' . htmlspecialchars($row['lote']) . '</td>
-                    <td>' . htmlspecialchars($row['fecha']) . '</td>
-                    <td>' . htmlspecialchars($row['Fechanegociado']) . '</td>
-                    <td>' . htmlspecialchars($row['nombre']) . '</td>
-                    <td>' . htmlspecialchars($row['apellido']) . '</td>
-                    <td>' . htmlspecialchars($row['cedula']) . '</td>
-                    <td>' . htmlspecialchars($row['monto']) . '</td>
-                    <td>' . htmlspecialchars($row['Estatus']) . '</td>
-                    <td>' . htmlspecialchars($row['Auditor']) . '</td>
-                    <td>' . htmlspecialchars($row['Fecha_Audito']) . '</td>
-                    
-                </tr>';
-          }
-
-          echo '
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>';
-        } else {
 
     ?>
-
-          <div class="alert alert-danger fs-4 text " role="alert">
-            No se encontraron registros para el lote especificado.
-          </div>
-
-        <?php
-        }
-      }
-    }
-
-
-
-    if ($total > 0) {
-
-      // Asegúrate de obtener el valor de 'lote' del formulario
-      $lote = $_POST["lote"];
-
-      $query = "SELECT * FROM  caja_$cajaSeleccionada WHERE lote = '$lote'and Estatus = 'AUDI'";
-      $result = mysqli_query($connection, $query);
-
-      if (!$result) {
-        echo "No se ha podido realizar la consulta: " . mysqli_error($connection);
-      } else { //comienza el proceso de validación
-        if (mysqli_num_rows($result) > 0) {
-
-          echo '
           <hr style="margin: 2; color: #00588D;">
-          <div class="container-md "  style="margin: 0; width: auto;">
-              <div class="row">
-                <div class="col-md-4 text-primary fs-3 text">Certificados sin Auditar</div>
-                <div class="col-md-4 offset-md-4 fs-3 text">' . ($total_2) . '</div>
-                  <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
-                      <table class="table caption-top" style="width: auto;">
-                          <thead>
-                              <tr>
-                                  <th scope="col">Cepadem</th>
-                                  <th scope="col">Caja</th>
-                                  <th scope="col">Lote</th>
-                                  <th scope="col">Fecha</th>
-                                  <th scope="col">Fecha de Negociado</th>
-                                  <th scope="col">Nombre</th>
-                                  <th scope="col">Apellido</th>
-                                  <th scope="col">Cédula</th>
-                                  <th scope="col">Monto</th>
-                                  <th scope="col">Estatus</th>
-                                  <th scope="col">Auditor</th>
-                                  <th scope="col">Fecha_Audito</th>
+          <div class="container-md text-center" style="margin: 0; width: auto;">
+            <div class="row">
+              <div class="col-md-4 text-primary fs-3 text">Certificados Auditados</div>
+              <div class="col-md-2 offset-md-2 fs-3 text"><?php echo $total_2 ?> </div>
+              <div class="col-md-2 offset-md-2 fs-3 text"> <button type="button" class="btn btn-success" onclick="exportTableToExcel('tblData_1','caja <?php echo $cajaSeleccionada; ?> Auditados')">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-spreadsheet-fill" viewBox="0 0 16 16">
+                    <path d="M6 12v-2h3v2z"></path>
+                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M3 9h10v1h-3v2h3v1h-3v2H9v-2H6v2H5v-2H3v-1h2v-2H3z"></path>
+                  </svg>
+                  Exportar
+                </button>
+              </div>
+              <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
+                <table class="table caption-top" style="width: auto;" id="tblData_1">
+                  <thead>
+                    <tr>
+                      <th scope="col">Cepadem</th>
+                      <th scope="col">Caja</th>
+                      <th scope="col">Lote</th>
+                      <th scope="col">Fecha de Negociado</th>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Apellido</th>
+                      <th scope="col">Cedula</th>
+                      <th scope="col">Monto</th>
+                      <th scope="col">Estatus</th>
+                      <th scope="col">Auditor</th>
+                      <th scope="col">Fecha_Audito</th>
 
-                              </tr>
-                          </thead>
-                          <tbody>';
-
-          while ($row = mysqli_fetch_assoc($result)) {
-            echo '
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php
+                    while ($row = mysqli_fetch_assoc($result)) {
+                      echo '
               <tr>
                   <td>' . htmlspecialchars($row['cepadem']) . '</td>
                   <td>' . htmlspecialchars($row['caja']) . '</td>
                   <td>' . htmlspecialchars($row['lote']) . '</td>
-                  <td>' . htmlspecialchars($row['fecha']) . '</td>
                   <td>' . htmlspecialchars($row['Fechanegociado']) . '</td>
                   <td>' . htmlspecialchars($row['nombre']) . '</td>
                   <td>' . htmlspecialchars($row['apellido']) . '</td>
                   <td>' . htmlspecialchars($row['cedula']) . '</td>
-                  <td>' . htmlspecialchars($row['monto']) . '</td>
+                  <td>B/. ' . htmlspecialchars($row['monto']) . '</td>
                   <td>' . htmlspecialchars($row['Estatus']) . '</td>
                   <td>' . htmlspecialchars($row['Auditor']) . '</td>
                   <td>' . htmlspecialchars($row['Fecha_Audito']) . '</td>
               </tr>';
-          }
-          echo '
+                    }
+                    echo '
                           </tbody>
                       </table>
                   </div>
               </div>
           </div>';
-        } else {
+                  } else {
 
-        ?>
+                    ?>
 
-          <div class="alert alert-danger fs-4 text " role="alert">
-            No se encontraron registros para el lote especificado.
-          </div>
+                    <div class="alert alert-danger fs-4 text " role="alert">
+                      No se encontraron registros para el lote especificado.
+                    </div>
 
-    <?php
+              <?php
 
-        }
+                  }
+                }
+              }
 
-        mysqli_close($connection);
-      }
-    }
+              ?>
 
-    ?>
+              <?php
+
+              if ($total > 0) {
+
+                // Asegúrate de obtener el valor de 'lote' del formulario
+                $lote = $_POST["lote"];
+                $query = "SELECT * FROM  caja_$cajaSeleccionada WHERE lote = '$lote' AND Estatus = '' ";
+                $result = mysqli_query($connection, $query);
+                if (!$result) {
+                  echo "No se ha podido realizar la consulta: " . mysqli_error($connection);
+                } else { //comienza el proceso de validación
+                  if (mysqli_num_rows($result) > 0) {
+
+              ?>
+                    <hr style="margin: 2; color: #00588D;">
+                    <div class="container-md text-center" style="margin: 0; width: auto;">
+                      <div class="row">
+                        <div class="col-md-4 text-primary fs-3 text">Certificados sin Auditar</div>
+                        <div class="col-md-2 offset-md-2 fs-3 text"> <?php echo $total ?></div>
+                        <div class="col-md-2 offset-md-2 fs-3 text"> <button type="button" class="btn btn-success" onclick="exportTableToExcel('tblData_2','caja <?php echo $cajaSeleccionada; ?> Sin auditar')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-spreadsheet-fill" viewBox="0 0 16 16">
+                              <path d="M6 12v-2h3v2z"></path>
+                              <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M3 9h10v1h-3v2h3v1h-3v2H9v-2H6v2H5v-2H3v-1h2v-2H3z"></path>
+                            </svg>
+                            Exportar
+                          </button>
+                        </div>
+
+                        <div class="col" style=" width: auto; height: 350px; overflow: scroll;">
+                          <table class="table caption-top" style="width: auto;" id="tblData_2">
+                            <thead>
+                              <tr>
+                                <th scope="col">Cepadem</th>
+                                <th scope="col">Caja</th>
+                                <th scope="col">Lote</th>
+                                <th scope="col">Fecha de Negociado</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Apellido</th>
+                                <th scope="col">Cedula</th>
+                                <th scope="col">Monto</th>
+                                <th scope="col">Estatus</th>
+                                <th scope="col">Auditor</th>
+                                <th scope="col">Fecha_Audito</th>
+
+                              </tr>
+                            </thead>
+                            <tbody>
+
+                              <?php
+                              while ($row = mysqli_fetch_assoc($result)) {
+                                echo '
+                <tr>
+                    <td>' . htmlspecialchars($row['cepadem']) . '</td>
+                    <td>' . htmlspecialchars($row['caja']) . '</td>
+                    <td>' . htmlspecialchars($row['lote']) . '</td>
+                    <td>' . htmlspecialchars($row['Fechanegociado']) . '</td>
+                    <td>' . htmlspecialchars($row['nombre']) . '</td>
+                    <td>' . htmlspecialchars($row['apellido']) . '</td>
+                    <td>' . htmlspecialchars($row['cedula']) . '</td>
+                    <td> B/. ' . htmlspecialchars($row['monto']) . '</td>
+                    <td>' . htmlspecialchars($row['Estatus']) . '</td>
+                    <td>' . htmlspecialchars($row['Auditor']) . '</td>
+                    <td>' . htmlspecialchars($row['Fecha_Audito']) . '</td>
+                    
+                </tr>';
+                              }
+
+                              echo '
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>';
+                            } else {
+
+                              ?>
+
+                              <div class="alert alert-danger fs-4 text " role="alert">
+                                No se encontraron registros para el lote especificado.
+                              </div>
+
+                        <?php
+                            }
+                            mysqli_close($connection);
+                          }
+                        }
+                        ?>
 
 
 
