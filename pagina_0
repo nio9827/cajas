@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+session_start(); //es necesario que ala session sea llamada al princio del codigo
 
 ?>
 
@@ -22,16 +23,20 @@ include 'conexion.php';
 
 
 <body>
+    
 
     <header style=" background: radial-gradient(circle, #00588D, #00395B, #00243C);margin-bottom: 3rem; border-bottom: 3px solid rgb(0, 0, 0); margin: 0px;">
 
         <nav class="navbar navbar-expand-lg ">
             <div class="container-fluid">
-                <a class="navbar-brand fs-1" href="consulta.php" style="color: aliceblue;">CEPADEM.AUDI</a>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="nav justify-content-center">
+                <img src="css/img2/auditoria logo.png" alt="img2" style="height: 80px;">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="nav navbar-nav justify-content-center">
                         <li class="nav-item">
-                            <a class="nav-link active fs-5" aria-current="page" href="listado.php" style="color: aliceblue;">listado</a>
+                            <a class="nav-link active fs-5 text-white" aria-current="page" href="consulta.php" >Consultar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active fs-5 text-white " aria-current="page" href="listado.php" >listado</a>
                         </li>
                     </ul>
                 </div>
@@ -61,19 +66,22 @@ include 'conexion.php';
                 fetch('http://dpi-webserver:8080/cepadem/login/cerrar_sesion.php', {
                     method: 'POST',
                     credentials: 'include'
-                }).then(function(response) {
+                }  ).then(function(response) {
                     // Redirige a la página de inicio de sesión después de cerrar la sesión
                     window.location.href = 'http://dpi-webserver:8080/cepadem/login/login.php';
-                });
+                } );
             });
         </script>
+
+
+<!--- cierra la session al reargar la pantalla , al cerrar la pantalla o al salirse de alguna forma de la panalla principal -->
+
 
         <hr style="margin: 2; color: #00588D;">
 
 
         <?php
 
-        session_start();
 
         // obtener el valor de las cajas por total
         $total = 0;
@@ -132,7 +140,6 @@ include 'conexion.php';
                             <option value="caja_0"></option>
                             <option value="caja_1">Caja 1</option>
                             <option value="caja_2">Caja 2</option>
-                            <option value="caja_3">Caja 3</option>
                         </select>
 
                         <input type="submit" value="Verificar" class="btn btn-primary" style="position: relative; left: 240px; top: -40px;">
@@ -261,18 +268,41 @@ include 'conexion.php';
 
 
                             if (mysqli_num_rows($result) > 0) {
-                                
+
 
                                 while ($row = mysqli_fetch_assoc($result)) {
 
-                                    if ($row['Estatus'] == 'AUDI'){
-
-                                        echo 'Este Certificado ya ha sido verificado';
-
-                                    }else{
-
+                                    if ($row['Estatus'] == 'AUDI') {
                                         
-                                    echo '
+                                        
+                                        echo '
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                                        <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                        </symbol>
+                                        <symbol id="info-fill" viewBox="0 0 16 16">
+                                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+                                        </symbol>
+                                        <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+                                            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+                                        </symbol>
+                                    </svg>
+                                        
+                                    <div class="row">
+                                    <div class="col-md-6 offset-md-3">
+                                        <div class="alert alert-primary d-flex align-items-center fs-3 text"  role="alert">
+                                            <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Info:">
+                                            <use xlink:href="#info-fill"/>
+                                            </svg>
+                                            <div>
+                                                ¡ESTE CERTIFICADO YA HA SIDO VERIFICADO!
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+                                    } else {
+
+                                        echo '
                                     <div class="container text-center" style="margin-top: 25px;">
                                         <div class="row">
                                                 <div class=" offset-md-3" style="margin: 0px;">
@@ -284,7 +314,6 @@ include 'conexion.php';
                                                             <th scope="col">Cepadem</th>
                                                             <th scope="col">caja</th>
                                                             <th scope="col">Lote</th>
-                                                            <th scope="col">Fecha</th>
                                                             <th scope="col">Fecha&nbspDe&nbspNegociado</th>
                                                             <th scope="col">Nombre</th>
                                                             <th scope="col">Apellido</th>
@@ -302,12 +331,11 @@ include 'conexion.php';
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['cepadem']) . '</td>
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['caja']) . '</td>
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['lote']) . '</td>
-                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['fecha']) . '</td>
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['Fechanegociado']) . '</td>
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['nombre']) . '</td>
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['apellido']) . '</td>
                                                             <td style="white-space: nowrap;">' . htmlspecialchars($row['cedula']) . '</td>
-                                                            <td style="white-space: nowrap;">' . htmlspecialchars($row['monto']) . '</td>
+                                                            <td style="white-space: nowrap;"> B/. ' . htmlspecialchars($row['monto']) . '</td>
                                                             
                                                         </tr>
                                                         </tbody>
@@ -317,6 +345,18 @@ include 'conexion.php';
                                     </div>
                                     ';
 
+        ?>
+                                        <div class="container text-center">
+                                            <div class="row">
+                                                <div class="col-md-6 offset-md-3">
+                                                    <form method="post" action="">
+                                                        <!-- Cambia el nombre del botón "Guardar" a algo único -->
+                                                        <input type="submit" name="guardarInfo" value="Guardar" class="btn btn-primary">
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+        <?php
                                     }
                                 }
                             }
@@ -333,34 +373,28 @@ include 'conexion.php';
 
         ?>
 
-        <?php if (!empty($cepadem)) : ?>
-
-            <div class="container text-center">
-                <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        <form method="post" action="">
-                            <!-- Cambia el nombre del botón "Guardar" a algo único -->
-                            <input type="submit" name="guardarInfo" value="guardar" class="btn btn-primary">
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-        <?php endif; ?>
-
 
         <?php
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["guardarInfo"])) {
-
+            $usuario = $_SESSION['nombre_usuario'];
+            
             $fechaActual = date("Y-m-d");
             $v_cepadem = $_SESSION["cepadem"];
-            $actualizar = "UPDATE `$resultado_form1` SET `Estatus`='AUDI',`Fecha_Audito`='$fechaActual' WHERE cepadem = '$v_cepadem'";
+            $actualizar = "UPDATE `$resultado_form1` SET `Estatus`='Auditado',`Fecha_Audito`='$fechaActual', Auditor = '$usuario' WHERE cepadem = '$v_cepadem'";
 
-            mysqli_query($connection, $actualizar); ?>
+            mysqli_query($connection, $actualizar); 
+            
+            ?>
             <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
                 <symbol id="check-circle-fill" viewBox="0 0 16 16">
                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+                <symbol id="info-fill" viewBox="0 0 16 16">
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+                </symbol>
+                <symbol id="exclamation-triangle-fill" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
                 </symbol>
             </svg>
 
@@ -385,10 +419,10 @@ include 'conexion.php';
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["limpiar"])) {
             // Limpiar la variable de sesión
-            unset($_SESSION['seleccion']);
-            unset($_SESSION['total']);
-            unset($_SESSION['cepadem']);
-            unset($_SESSION['cont']);
+            //unset($_SESSION['seleccion']);
+            // unset($_SESSION['total']);
+            //unset($_SESSION['cepadem']);
+            // unset($_SESSION['cont']);
         }
         ?>
 
