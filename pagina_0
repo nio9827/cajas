@@ -2,6 +2,14 @@
 include 'conexion.php';
 session_start(); //es necesario que ala session sea llamada al princio del codigo
 
+
+// Verifica si el usuario ha iniciado sesión
+if (!isset($_SESSION['cedula_usuario'])) {
+    // Si no ha iniciado sesión, redirige a la página de inicio de sesión
+    header("Location: http://dpi-webserver:8080/cepadem/login/login.php?");
+    exit();
+}
+
 ?>
 
 <!doctype html>
@@ -295,7 +303,7 @@ session_start(); //es necesario que ala session sea llamada al princio del codig
                                             <use xlink:href="#info-fill"/>
                                             </svg>
                                             <div>
-                                                ¡ESTE CERTIFICADO YA HA SIDO VERIFICADO!
+                                                ¡ESTE CERTIFICADO YA HA SIDO AUDITADO!
                                             </div>
                                         </div>
                                     </div>
