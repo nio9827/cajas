@@ -10,6 +10,7 @@ if (!isset($_SESSION['cedula_usuario'])) {
     exit();
 }
 
+
 ?>
 
 <!doctype html>
@@ -31,7 +32,10 @@ if (!isset($_SESSION['cedula_usuario'])) {
 
 
 <body>
-    
+    <script>
+
+    </script>
+
 
     <header style=" background: radial-gradient(circle, #00588D, #00395B, #00243C);margin-bottom: 3rem; border-bottom: 3px solid rgb(0, 0, 0); margin: 0px;">
 
@@ -41,10 +45,10 @@ if (!isset($_SESSION['cedula_usuario'])) {
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="nav navbar-nav justify-content-center">
                         <li class="nav-item">
-                            <a class="nav-link active fs-5 text-white" aria-current="page" href="consulta.php" >Consultar</a>
+                            <a class="nav-link active fs-5 text-white" aria-current="page" href="consulta.php">Consultar</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active fs-5 text-white " aria-current="page" href="listado.php" >listado</a>
+                            <a class="nav-link active fs-5 text-white " aria-current="page" href="listado.php">listado</a>
                         </li>
                     </ul>
                 </div>
@@ -67,6 +71,7 @@ if (!isset($_SESSION['cedula_usuario'])) {
             </div>
         </div>
 
+
         <script>
             // Agrega un evento al botón para cerrar sesión manualmente
             document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
@@ -74,15 +79,22 @@ if (!isset($_SESSION['cedula_usuario'])) {
                 fetch('http://dpi-webserver:8080/cepadem/login/cerrar_sesion.php', {
                     method: 'POST',
                     credentials: 'include'
-                }  ).then(function(response) {
-                    // Redirige a la página de inicio de sesión después de cerrar la sesión
-                    window.location.href = 'http://dpi-webserver:8080/cepadem/login/login.php';
-                } );
+                }).then(function(response) {
+                    // Verifica si la solicitud fue exitosa antes de redirigir
+
+                    if (response.ok) {
+                        // Limpia el historial de navegación y redirige a la página de inicio de sesión
+                        window.history.pushState({}, '', 'http://dpi-webserver:8080/cepadem/login/login.php');
+                        window.location.href = 'http://dpi-webserver:8080/cepadem/login/login.php';
+
+                    }
+                });
             });
         </script>
 
 
-<!--- cierra la session al reargar la pantalla , al cerrar la pantalla o al salirse de alguna forma de la panalla principal -->
+
+        <!--- cierra la session al reargar la pantalla , al cerrar la pantalla o al salirse de alguna forma de la panalla principal -->
 
 
         <hr style="margin: 2; color: #00588D;">
@@ -281,8 +293,8 @@ if (!isset($_SESSION['cedula_usuario'])) {
                                 while ($row = mysqli_fetch_assoc($result)) {
 
                                     if ($row['Estatus'] == 'AUDI') {
-                                        
-                                        
+
+
                                         echo '
                                         <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
                                         <symbol id="check-circle-fill" viewBox="0 0 16 16">
@@ -386,14 +398,14 @@ if (!isset($_SESSION['cedula_usuario'])) {
 
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["guardarInfo"])) {
             $usuario = $_SESSION['nombre_usuario'];
-            
+
             $fechaActual = date("Y-m-d");
             $v_cepadem = $_SESSION["cepadem"];
             $actualizar = "UPDATE `$resultado_form1` SET `Estatus`='Auditado',`Fecha_Audito`='$fechaActual', Auditor = '$usuario' WHERE cepadem = '$v_cepadem'";
 
-            mysqli_query($connection, $actualizar); 
-            
-            ?>
+            mysqli_query($connection, $actualizar);
+
+        ?>
             <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
                 <symbol id="check-circle-fill" viewBox="0 0 16 16">
                     <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
@@ -434,7 +446,19 @@ if (!isset($_SESSION['cedula_usuario'])) {
         }
         ?>
 
+<!-- JavaScript para deshabilitar el botón Atrás -->
+<script>
+    window.onload = function() {
+        window.history.forward();
+    }
 
+    // Manejar el evento de retroceso manual del usuario
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    }
+</script>
 
 
 
