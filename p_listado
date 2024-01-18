@@ -1,5 +1,6 @@
 <?php
 include 'conexion.php';
+session_start();
 ?>
 <!doctype html>
 <html lang="en">
@@ -38,6 +39,7 @@ include 'conexion.php';
     </nav>
   </header>
 
+
   <main style="height: auto; width: auto;">
 
     <div class="container-fluid text-center">
@@ -53,18 +55,25 @@ include 'conexion.php';
     </div>
 
     <script>
-      // Agrega un evento al botón para cerrar sesión manualmente
-      document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
-        // Realiza una solicitud al servidor para cerrar la sesión
-        fetch('http://dpi-webserver:8080/cepadem/login/cerrar_sesion.php', {
-          method: 'POST',
-          credentials: 'include'
-        }).then(function(response) {
-          // Redirige a la página de inicio de sesión después de cerrar la sesión
-          window.location.href = 'http://dpi-webserver:8080/cepadem/login/login.php';
-        });
-      });
-    </script>
+            // Agrega un evento al botón para cerrar sesión manualmente
+            document.getElementById('cerrarSesionBtn').addEventListener('click', function() {
+                // Realiza una solicitud al servidor para cerrar la sesión
+                fetch('http://dpi-webserver:8080/cepadem/login/cerrar_sesion.php', {
+                    method: 'POST',
+                    credentials: 'include'
+                }).then(function(response) {
+                    // Verifica si la solicitud fue exitosa antes de redirigir
+
+                    if (response.ok) {
+                        // Limpia el historial de navegación y redirige a la página de inicio de sesión
+                        window.history.pushState({}, '', 'http://dpi-webserver:8080/cepadem/login/login.php');
+                        window.location.href = 'http://dpi-webserver:8080/cepadem/login/login.php';
+
+                    }
+                });
+            });
+        </script>
+
 
     <script>
       function exportTableToExcel(tableID, filename = '') {
@@ -391,6 +400,19 @@ include 'conexion.php';
 
   </footer>
 
+<!-- JavaScript para deshabilitar el botón Atrás -->
+<script>
+    window.onload = function() {
+        window.history.forward();
+    }
+
+    // Manejar el evento de retroceso manual del usuario
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    }
+</script>
 
 
 
