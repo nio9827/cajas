@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Title</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+</head>
+
+<body>
+  <header>
+    <!-- place navbar here -->
+  </header>
+
+
+  <main >
+
+    <div class="container text-rigth" style="margin: 0;">
+
+      <div class="row text-center">
+        <div class="col-md-6 offset-md-1">
+          <img src="img1.png" alt="logo">
+          <p>ACTA DE AUDITORIA DE CEPADEM NEGOCIADOS EN BANCO NACIONAL DE PANAMA 
+            CAJA N° _***_ 
+            </p>
+        </div>
+      </div>
+      <div class="row text-rigth">
+        <div class="col-md-6 offset-md-1">
+          Hoy______de ________de 2024 siendo las ________, en la Oficina de de Custodia <br>
+          de CEPADEM, ubicada en el P.H. Republic, planta baja, se deja constancia de la <br>
+          auditoría realizada a los Certificados de Pagos Negociables de la Segunda partida <br>
+          del XIII mes (CEPADEM) que el Banco Nacional de Panamá, regresa constancia de <br>
+          que fueron ya negociados.</div>
+      </div>
+
+      <p>Observaciones: </p>
+      <p style="margin-left: 100px;">Se detalla a continuación lo auditado:</p>
+    </div>
+
+
+    <div class="container " style="margin: 0;">
+
+      <table class="table text-center" style="width: auto;">
+        <thead>
+          <tr>
+            <th scope="col">Caja</th>
+            <th scope="col">Cant de CEPADEM en Caja</th>
+            <th scope="col">Lote</th>
+            <th scope="col">Cant de CEPADEM en lote</th>
+            <th scope="col">observacion</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+            <td>@mdo</td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <p>Me firman los siguientes funcionarios:</p>
+
+
+    <div class="container text-center" style="margin: 0;">
+
+      <div class="row justify">
+        <div class="col-2">
+          Nombre del Custodia
+        </div>
+        <div class="col-2">
+          One of two columns
+        </div>
+      </div>
+
+      </div>
+    </div>
+
+
+  </main>
+
+
+
+  <footer>
+    <!-- place footer here -->
+  </footer>
+  <!-- Bootstrap JavaScript Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+
+</html>
